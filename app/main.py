@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI, HTTPException
 
 from .models import Task, TaskCreate, TaskUpdate
-from .repository import TaskRepository
+from .server import TaskRepository
 
 app = FastAPI(
     title="Task Service",
