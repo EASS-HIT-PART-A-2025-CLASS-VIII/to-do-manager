@@ -19,6 +19,7 @@ The service provides CRUD operations for managing Tasks using:
 ToDoManager/
 ├── app/
 │   ├── __init__.py
+│   ├── exceptions.py
 │   ├── main.py
 │   ├── models.py
 │   └── server.py
