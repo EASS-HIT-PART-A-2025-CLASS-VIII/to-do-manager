@@ -1,8 +1,9 @@
-# Task Service – EX1 FastAPI Backend
+# Task Service – ToDoManager (FastAPI + Streamlit)
 
-This project implements the backend microservice for **ToDoManager**, as required in:
+This project implements a full-stack task management application with:
 
-**EX1 – FastAPI Foundations (Backend)**
+- **Backend**: FastAPI microservice (EX1 – FastAPI Foundations)
+- **Frontend**: Streamlit UI (EX2 – Frontend Integration)
 
 The service provides CRUD operations for managing Tasks using:
 
@@ -10,12 +11,13 @@ The service provides CRUD operations for managing Tasks using:
 - **Pydantic**
 - **pytest + TestClient**
 - **In-memory repository** (per EX1 requirement)
+- **Streamlit** for the user interface
 
 ---
 
 ## Project Structure
 
-```css
+```
 ToDoManager/
 ├── app/
 │   ├── __init__.py
@@ -23,11 +25,15 @@ ToDoManager/
 │   ├── main.py
 │   ├── models.py
 │   └── server.py
+├── frontend/
+│   └── streamlit_app.py
 ├── tests/
 │   └── test_to_do_manager.py
 ├── requirements.txt
 └── README.md
 ```
+
+---
 
 # 🚀 Getting Started
 
@@ -43,8 +49,14 @@ uv venv
 
 ## 2. Activate the environment
 
+**Windows (PowerShell):**
 ```bash
 .venv\Scripts\Activate.ps1
+```
+
+**macOS/Linux:**
+```bash
+source .venv/bin/activate
 ```
 
 ## 3. Install Dependencies
@@ -53,17 +65,81 @@ uv venv
 uv pip install -r requirements.txt
 ```
 
-## 4. Running the API
+---
+
+# 🖥️ Running the Application
+
+## Step 1: Start the FastAPI Backend
+
+First, start the FastAPI server:
 
 ```bash
 uv run uvicorn app.main:app --reload
 ```
 
-The server runs on: http://127.0.0.1:8000
+The backend server runs on: **http://127.0.0.1:8000**
 
-Swagger UI: http://127.0.0.1:8000/docs
+Swagger UI documentation: **http://127.0.0.1:8000/docs**
 
-## API Overview
+## Step 2: Start the Streamlit Frontend
+
+In a **new terminal window** (with the virtual environment activated), run:
+
+```bash
+streamlit run frontend/streamlit_app.py
+```
+
+The Streamlit UI will open automatically in your browser at: **http://localhost:8501**
+
+---
+
+# 🎨 Streamlit UI Overview
+
+The Streamlit frontend provides a beautiful, purple-themed interface for managing your tasks.
+
+## UI Features
+
+### **Sidebar**
+- **Settings**: Displays the FastAPI server address
+- **How to use**: Quick guide for getting started
+
+### **Main Dashboard**
+
+#### **➕ Add a new task**
+A form to create new tasks with the following fields:
+- **Title** (required): Short description of the task
+- **Description** (optional): Additional details
+- **Status**: Choose from Todo, In Progress, or Done
+- **Due date** (optional): Set a deadline
+
+The "Create task" button has a custom hover effect (white background → dark purple on hover).
+
+#### **📓 Tasks Section**
+
+**Summary Metrics**: 
+- Visual count cards showing:
+  - 📋 Todo tasks
+  - ⚡ In Progress tasks
+  - ✅ Done tasks
+
+**All Tasks List**:
+- Tasks displayed in expandable cards with status emojis
+- Each task shows:
+  - Task ID and title
+  - Description
+  - Due date
+  - Created timestamp
+- **Actions per task**:
+  - Update status dropdown
+  - 💾 Save status button
+  - 🗑️ Delete task button
+
+#### **🔄 Refresh Tasks Button**
+Updates the task list with the latest data from the backend
+
+---
+
+# 🔌 API Overview
 
 ## Endpoints
 
@@ -77,7 +153,7 @@ Swagger UI: http://127.0.0.1:8000/docs
 
 ## Request/Response Examples
 
-GET `/tasks`
+**GET** `/tasks`
 ```json
 [
   {
@@ -91,8 +167,7 @@ GET `/tasks`
 ]
 ```
 
-
-POST `/tasks/{id}`
+**POST** `/tasks`
 ```json
 {
   "title": "Do laundry",
@@ -102,16 +177,16 @@ POST `/tasks/{id}`
 }
 ```
 
-DELETE `/tasks/{id}`
+**DELETE** `/tasks/{id}`
 ```json
 {
   "message": "Task 1 deleted successfully"
 }
 ```
 
+---
 
-
-## Running Tests
+# 🧪 Running Tests
 
 The project uses pytest + FastAPI's TestClient.
 
@@ -121,17 +196,52 @@ To run the test suite:
 uv run pytest
 ```
 
-## Docker
+---
+
+# 🐳 Docker
 
 This project includes a Dockerfile so the API can run inside a container.
 
-Build the Docker image:
+**Build the Docker image:**
 ```bash
 docker build -t todo-manager .
 ```
-Run the container:
+
+**Run the container:**
 ```bash
 docker run -p 8000:8000 todo-manager
 ```
 
+**Note**: When using Docker, update the `API_URL` in `streamlit_app.py` if accessing from a different host.
 
+---
+
+# 📝 Notes
+
+- Make sure the FastAPI backend is running before starting the Streamlit frontend
+- The application uses an in-memory repository, so data will be lost when the server restarts
+- All task operations are performed through the REST API
+- The UI automatically refreshes after creating, updating, or deleting tasks
+
+---
+
+# 🛠️ Troubleshooting
+
+**Cannot connect to API error in Streamlit:**
+- Ensure the FastAPI server is running on http://127.0.0.1:8000
+- Check that no firewall is blocking the connection
+
+**Port already in use:**
+- FastAPI default: 8000
+- Streamlit default: 8501
+- Use different ports if these are occupied
+
+---
+
+# 📚 Technology Stack
+
+- **Backend**: FastAPI, Pydantic, Uvicorn
+- **Frontend**: Streamlit
+- **Testing**: pytest, TestClient
+- **Environment**: uv (Python package manager)
+- **Containerization**: Docker
