@@ -7,12 +7,11 @@ This project implements a full-stack task management application with:
 
 ---
 
-## 🌟 New Professional Features
+## 🌟 New Features
 - **Persistence**: Switched from in-memory to a **SQLite Database** via SQLAlchemy. Your tasks remain saved after restarts.
 - **Layered Architecture**: Organized into API, Repository, and Model layers for clean, maintainable code.
 - **Mark Favorites**: Toggle a ⭐ status on tasks to highlight priorities.
 - **Data Export**: Sidebar tool to download your task list as a **CSV file**.
-- **Refined UI**: Left-aligned action buttons and custom purple-themed components.
 
 ---
 
