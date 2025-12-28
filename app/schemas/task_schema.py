@@ -41,3 +41,7 @@ class Task(TaskBase):
     """
     id: int
     created_at: datetime
+    is_favorite: bool = False
+
+    class Config:
+        from_attributes = True

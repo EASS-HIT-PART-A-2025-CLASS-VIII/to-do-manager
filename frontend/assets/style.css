@@ -1,0 +1,67 @@
+/* Main theme colors */
+:root {
+    --primary-purple: #8154B3;
+    --light-purple: #9B7BC4;
+    --dark-purple: #6B42A0;
+    --purple-bg: #F5F1FA;
+    --purple-accent: #E8DEFF;
+}
+
+.main {
+    background: linear-gradient(135deg, var(--purple-bg) 0%, #FFFFFF 100%);
+}
+
+h1, h2, h3 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, var(--primary-purple) 0%, var(--dark-purple) 100%);
+}
+
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* Button styling - Compact & Left Aligned */
+.stButton > button {
+    background-color: #FFFFFF;
+    color: black;
+    border: 2px solid var(--purple-accent);
+    border-radius: 8px;
+    padding: 0.25rem 0.75rem !important;
+    font-weight: 600;
+    width: auto !important; /* Prevents stretching */
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    background-color: var(--dark-purple);
+    border-color: var(--dark-purple);
+    color: white;
+}
+
+/* Localhost style for CSV Button */
+.stDownloadButton > button {
+    background-color: rgba(155, 123, 196, 0.2) !important;
+    color: #9B7BC4 !important;
+    border: 1px solid rgba(155, 123, 196, 0.3) !important;
+    font-family: monospace !important;
+    border-radius: 4px !important;
+    width: 100% !important;
+}
+
+/* Metrics and Containers */
+div[data-testid="metric-container"] {
+    background: linear-gradient(135deg, var(--purple-bg) 0%, var(--purple-accent) 100%);
+    border: 2px solid var(--purple-accent);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.streamlit-expanderHeader {
+    background-color: var(--purple-bg) !important;
+    border: 2px solid var(--purple-accent) !important;
+    color: var(--primary-purple) !important;
+}
