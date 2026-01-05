@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: .
+    container_name: todo_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./tasks.db:/app/tasks.db # Persists your DB on your computer
+    environment:
+      - PYTHONPATH=/app
+
+  frontend:
+    build: .
+    container_name: todo_frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONPATH=/app
+    # This overrides the Backend CMD to run Streamlit instead
+    command: ["streamlit", "run", "frontend/streamlit_app.py", "--server.address", "0.0.0.0"]
+    depends_on:
+      - backend
