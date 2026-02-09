@@ -29,6 +29,7 @@ services:
       - "8501:8501"
     environment:
       - PYTHONPATH=/app
+      - BACKEND_URL=http://backend:8000
     command: ["streamlit", "run", "frontend/streamlit_app.py", "--server.address", "0.0.0.0"]
     depends_on:
       - backend
