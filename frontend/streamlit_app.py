@@ -83,8 +83,10 @@ def main():
             status_emoji = {"todo": "📋", "in_progress": "⚡", "done": "✅"}
             emoji = status_emoji.get(t["status"], "📋")
             fav_icon = "⭐" if t.get("is_favorite") else "☆"
+            category = t.get("category", "📝 General")
 
-            with st.expander(f"{fav_icon} {emoji} [#{t['id']}] {t['title']}"):
+            with st.expander(f"{fav_icon} {emoji} [#{t['id']}] {t['title']} | {category}"):
+                st.markdown(f"**Category:** `{category}`")
                 st.markdown(f"**Description:** {t.get('description') or '_No description_'}")
                 st.markdown(f"**Due Date:** `{t.get('due_date') or 'None'}`")
 
@@ -108,7 +110,7 @@ def main():
                     )
 
                 # Grouped Action Buttons on the Left
-                b1, b2, b3, _ = st.columns([0.15, 0.2, 0.15, 1.5])
+                b1, b2, b3, b4, _ = st.columns([0.15, 0.2, 0.15, 0.25, 1.25])
                 with b1:
                     if st.button("💾 Save", key=f"sv-{t['id']}"):
                         api.update_task(t['id'], {"status": new_status})
@@ -122,6 +124,11 @@ def main():
                     if st.button("🗑️ Delete", key=f"dl-{t['id']}"):
                         api.delete_task(t['id'])
                         st.rerun()
+                with b4:
+                    if st.button("🪄 AI Info", key=f"ai_desc-{t['id']}"):
+                        with st.spinner("Thinking..."):
+                            api.generate_ai_description(t['id'])
+                            st.rerun()
 
 
 if __name__ == "__main__":

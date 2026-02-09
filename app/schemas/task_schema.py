@@ -16,6 +16,7 @@ class TaskBase(BaseModel):
     description: Optional[str] = Field(None, max_length=1000)
     status: TaskStatus = Field(default=TaskStatus.TODO)
     due_date: Optional[date] = None
+    category: Optional[str] = Field("📝 General", max_length=50)
 
 
 class TaskCreate(TaskBase):
@@ -33,6 +34,7 @@ class TaskUpdate(BaseModel):
     description: Optional[str] = Field(None, max_length=1000)
     status: Optional[TaskStatus] = None
     due_date: Optional[date] = None
+    category: Optional[str] = Field(None, max_length=50)
 
 
 class Task(TaskBase):

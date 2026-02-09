@@ -15,3 +15,4 @@ class TaskDB(Base):
     due_date = Column(Date)
     is_favorite = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    category = Column(String, default="General")

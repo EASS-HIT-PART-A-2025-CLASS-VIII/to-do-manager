@@ -1,18 +1,18 @@
 # Task Service – ToDoManager (FastAPI + Streamlit)
 
-This project implements a full-stack task management application with:
-
+A full-stack task management application integrated with local LLMs for smart categorization and task assistance.
 - **Backend**: FastAPI microservice with SQLite persistence.
 - **Frontend**: Streamlit UI with custom CSS, real-time API integration, and data export.
 
 ---
 
 ## 🌟 New Features
-- **Persistence**: Switched from in-memory to a **SQLite Database** via SQLAlchemy. Your tasks remain saved after restarts.
-- **Layered Architecture**: Organized into API, Repository, and Model layers for clean, maintainable code.
-- **Mark Favorites**: Toggle a ⭐ status on tasks to highlight priorities.
-- **Data Export**: Sidebar tool to download your task list as a **CSV file**.
-
+- **🤖 AI Smart Categorization**: Automatically classifies tasks into categories (Work, Study, Health, etc.) using `TinyLlama`.
+- **🪄 AI Task Assistant**: Generates actionable tips and detailed descriptions for tasks with a single click.
+- **💾 Persistence**: SQLite Database via SQLAlchemy ensures your tasks are saved permanently.
+- **⭐ Favorites**: Toggle priority status for important tasks.
+- **🐳 Dockerized Architecture**: Seamless multi-container setup with Docker Compose.
+- **📊 Data Export**: Export your task list to CSV directly from the sidebar.
 ---
 
 ## 📂 Project Structure
@@ -22,30 +22,18 @@ This project implements a full-stack task management application with:
 ```text
 ToDoManager/
 ├── app/
-│   ├── api/            # Route handlers (FastAPI Decorators)
-│   │   └── tasks.py
-│   ├── core/           # Configuration & Global Constants
-│   │   └── config.py
+│   ├── api/            # Route handlers (FastAPI)
+│   ├── core/           # AI Logic (Ollama/TinyLlama integration)
 │   ├── models/         # Database Models (SQLAlchemy)
-│   │   └── task_db.py
-│   ├── repository/     # Data Access Logic (CRUD + Business Logic)
-│   │   └── task_repo.py
-│   ├── schemas/        # Data Validation (Pydantic)
-│   │   └── task_schema.py
-│   ├── database.py     # Connection setup & Session management
-│   ├── exceptions.py   # Custom Error types
-│   └── main.py         # App Entry Point & Global Exception Handlers
-│   └── __init__.py
+│   ├── repository/     # CRUD & Business Logic
+│   ├── schemas/        # Pydantic validation
+│   └── database.py     # Session management
 ├── frontend/
-│   ├── assets/         # UI styling
-│   │   └── style.css
-│   ├── api_client.py   # API Communication Logic (Separated from UI)
-│   └── streamlit_app.py# Main Streamlit UI Layout
-├── tests/
-│   └── test_to_do_manager.py
-├── requirements.txt
-├── Dockerfile
-└── README.md
+│   ├── api_client.py   # API Communication Logic
+│   └── streamlit_app.py# Streamlit UI
+├── docker-compose.yml  # Multi-container orchestration
+├── Dockerfile          # Backend containerization
+└── requirements.txt
 ```
 
 ---
@@ -83,10 +71,28 @@ uv pip install -r requirements.txt
 ---
 
 # 🖥️ Running the Application
+## Prerequisites
+
+1. Download and install Ollama from ollama.com
+2. Installed on your system, uv (pip install uv)
+3. Ensure the Ollama app is running, then pull the model:
+```bash
+ollama pull tinyllama
+```
+4. Install Dependencies - from project root
+```bash
+uv sync
+```
 
 ## Step 1: Start the FastAPI Backend
 
-First, start the FastAPI server:
+### Set environment variable so the backend knows where Ollama is
+```bash
+export OLLAMA_HOST=http://localhost:11434  # macOS/Linux
+$env:OLLAMA_HOST="http://localhost:11434" # Windows PowerShell
+```
+
+### Start the FastAPI server:
 
 ```bash
 uv run uvicorn app.main:app --reload
@@ -127,6 +133,8 @@ A form to create new tasks with the following fields:
 - **Description** (optional): Additional details
 - **Status**: Choose from Todo, In Progress, or Done
 - **Due date** (optional): Set a deadline
+- **AI Categorization** Simply type a task in English (e.g., "Study for Automata exam"), and the AI will assign a category and emoji automatically
+- **Magic Info Button** (🪄): Click "AI Info" on any task card to generate a smart tip or description using the local LLM.
 
 The "Create task" button has a custom hover effect (white background → dark purple on hover).
 
@@ -150,6 +158,7 @@ The "Create task" button has a custom hover effect (white background → dark pu
   - Mark as favorite
   - 💾 Save status button
   - 🗑️ Delete task button
+  - 🪄 AI Info
 
 #### **🔄 Refresh Tasks Button**
 Updates the task list with the latest data from the backend
@@ -164,9 +173,10 @@ Updates the task list with the latest data from the backend
 |--------|----------|-------------|
 | GET    | `/tasks` | List all tasks |
 | GET    | `/tasks/{id}` | Retrieve a task by ID |
-| POST   | `/tasks` | Create a new task |
+| POST   | `/tasks` | Create a task (triggers AI classification) |
 | PUT    | `/tasks/{id}` | Update an existing task |
 | PATCH  | `/tasks/{id}/favorite` | Toggle favorite status |
+| PATCH  | `/tasks/{id}/generate-description` | Triggers AI description generation |
 | DELETE | `/tasks/{id}` | Delete a task by ID |
 
 ## Request/Response Examples
@@ -218,20 +228,21 @@ uv run pytest
 
 # 🐳 Docker
 
-This project includes a Dockerfile so the API can run inside a container.
-
+The easiest way to run the entire application, including the AI engine and the database, is using Docker Compose. This ensures all services (Frontend, Backend, and Ollama) are correctly networked.
 **Build the Docker image:**
 ```bash
-docker build -t todo-manager .
+docker-compose up --build
 ```
 
-**Run the container:**
+**Initialize the AI Engine**
+In a new terminal, download the lightweight AI model:
 ```bash
-docker run -p 8000:8000 todo-manager
+docker exec -it ollama ollama pull tinyllama
 ```
 
-**Note**: When using Docker, update the `API_URL` in `streamlit_app.py` if accessing from a different host.
-
+### 📝 Docker Notes:
+- Persistence: A Docker Volume named ollama_data is created to ensure your AI models stay saved even if the containers are stopped.
+- Networking: Inside the Docker network, the Frontend communicates with the Backend using the hostname http://backend:8000.
 ---
 
 # 📝 Notes
@@ -263,3 +274,9 @@ docker run -p 8000:8000 todo-manager
 - **Testing**: pytest, TestClient
 - **Environment**: uv (Python package manager)
 - **Containerization**: Docker
+- **AI Engine**: Ollama (Model: tinyllama)
+
+# 📝 Performance Notes
+Local AI: The AI model runs locally on your CPU. Ensure Docker is allocated at least 4GB of RAM for smooth performance.
+
+Persistence: Data is stored in a SQLite file that persists through container restarts thanks to Docker Volumes.

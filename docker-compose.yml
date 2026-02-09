@@ -1,13 +1,26 @@
 services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - .:/app # שומר את המודלים הכבדים על המחשב שלך ולא בתוך המכולה
+    restart: always
+
   backend:
     build: .
     container_name: todo_backend
     ports:
       - "8000:8000"
     volumes:
-      - ./tasks.db:/app/tasks.db # Persists your DB on your computer
+      - ./tasks.db:/app/tasks.db
     environment:
       - PYTHONPATH=/app
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    restart: always
 
   frontend:
     build: .
@@ -16,7 +29,7 @@ services:
       - "8501:8501"
     environment:
       - PYTHONPATH=/app
-    # This overrides the Backend CMD to run Streamlit instead
     command: ["streamlit", "run", "frontend/streamlit_app.py", "--server.address", "0.0.0.0"]
     depends_on:
       - backend
+    restart: always
